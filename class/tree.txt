@@ -1,0 +1,21 @@
+Folder PATH listing
+Volume serial number is A0A6-FD66
+C:.
+|   1_LocalMacros.do
+|   2_Loops.do
+|   OrganizeProjectFolder.do
+|   Tree.do
+|   tree.txt
+|   
++---data
+|       monthyear.dta
+|       
++---DataAnalysis
++---DataManage
++---DataOutput
+|   +---Figures
+|   +---Mappings
+|   \---Tables
++---DataSources
++---DataUsing
+\---Report

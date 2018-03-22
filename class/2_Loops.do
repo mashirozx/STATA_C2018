@@ -27,6 +27,7 @@ gen ln_weight = log(weight)
 	
 	*(2)then use the foreach command
 	foreach var of local vars { //open the loop with curly brackets
+		/* 字符串拼接 */
 		gen ln_`var'2 = log(`var') //reference to the elements `var' of the local vars
 									//note: I put also "2" because the names
 										//are already taken by the previous transformations
@@ -34,6 +35,7 @@ gen ln_weight = log(weight)
 
 * let us check
 summarize ln_price ln_price2 ln_mpg ln_mpg2 ln_weight ln_weight2
+/* 移除变量 */
 drop ln_price ln_price2 ln_mpg ln_mpg2 ln_weight ln_weight2 //let us drop all the variables I created for the example
 						
 						/*in general
@@ -43,18 +45,20 @@ drop ln_price ln_price2 ln_mpg ln_mpg2 ln_weight ln_weight2 //let us drop all th
 						*/
 						
 *Another example****************************************************************
+/* 注意此处正则，应该是有一个参数项的 */
 foreach x of varlist * { //note here the "trample card" * used to reference all the possible variables
-	capture gen log`x' = log(`x')
+	capture gen log`x' = log(`x') /* capture的作用——忽略错误 */
 	capture gen sqrt`x' = sqrt(`x')
 	capture gen rec`x' = 1/`x'
 }
+/* 正则 */
 drop log* sqrt* rec* //use again the trample card "*"; this is standard in regular expessions
 
 *note the use of capture, if Stata meets an error message continues to operate
 /*Why might the generate commands not work? Suppose in our case that the variables
 in memory included some string variables, so that any attempt to take logarithms
 or square roots or reciprocals of those variables would fail. The solution is to say, by
-means of capture, �unless this will not work�. In other terms it is a way to tell Stata
+means of capture, “unless this will not work”. In other terms it is a way to tell Stata
 to do the transformation for all the numeric variables.
 */
 foreach x of varlist _all { //note here the _all used to reference all the possible variables: same result
@@ -66,7 +70,7 @@ foreach x of varlist _all { //note here the _all used to reference all the possi
 in a local before starting the loop*/
 
 *another example
-foreach q of numlist 11/13 {
+foreach q of numlist 11/13 { /* 取值范围：11~13 */
 	gen price`q' = price
 }
 ********************************************************************************FORVALUES
@@ -121,7 +125,7 @@ forvalues year = 1990/2010 {
 	foreach month in Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec {
 		rename inc`month'`year' inc`period'
 		
-local period = `period'+1 //update period
-	}
+		local period = `period'+1 //update period
+		}
 }
 ********************************************************************************
