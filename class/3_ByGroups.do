@@ -42,7 +42,7 @@ summarize
 	
 	*another UW command in stata is "nmissing" it is useful
 	*[try your code here to install and get help from it]
-
+*以上自己看*
 describe //another command to understand better what type of data you have
 codebook, compact //another command i like a lot!!!
 
@@ -117,8 +117,10 @@ sum
 	*all countries by year
 	*all years by country (Panel)
 
+*排序
 sort countrycode year  //browse
 sort year countrycode //browse
+*bys应该是一个类似apply的操作
 bys countrycode: sum GdpPerCapita
 bys year: sum LifeExpectBirth
 
@@ -221,7 +223,7 @@ order GroupId* foreign rep78 //... and browse
 *	 bys GroupId6: gen nid_GroupId6 = _n
 
 order GroupId* foreign rep78 //let us check
-assert GroupId5 == GroupId6
+assert GroupId5 == GroupId6 //Assert：比较两组间是否有区别
 assert GroupId4 == GroupId5
 assert GroupId4 == GroupId6
 assert GroupId1 == GroupId5
