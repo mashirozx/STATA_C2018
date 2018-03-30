@@ -1,7 +1,7 @@
 *Dofile to exercise to create and move around the project's folders
 *click on execute button or ctrl + D
 clear all
-set more off
+set more off //似乎 --more-- 标签意义是折叠结果之类的东西
 ********************************************************************************
 !mkdir DataSources
 !mkdir DataManage
@@ -33,6 +33,7 @@ cd Tabls
 *now, how do you go back into the main project Folder? (up TWO steps)
 cd ..\.. /*the first steps moves you from inside Tables to inside DataOutput, 
 			the second from inside of DataOutput to inside ProjectFolder*/
+* 发现在上面这样的注释方式下会只读取出第一行
 
 /*Did you see how I added comments (appear in green). You should check that I applied
 three different methods. Can you understand the difference between each of them?*/
@@ -44,6 +45,7 @@ cd DataOutput
 dir //check
 
 shell rmdir "Tabls" /s //the system might ask you if you want to delete the folder: say "Yes"
+* 结尾带有s时会有删除确认选项
 dir //check now
 
 *now let us just create Tabls and rename Tables
@@ -60,4 +62,4 @@ dir
 *let us go back within the main project folder
 pwd //ops I forgot where I was :)
 cd ..
-!tree> tree.txt /a /f
+!tree> tree.txt /a /f // Copy?

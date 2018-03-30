@@ -1,0 +1,16 @@
+Folder PATH listing
+Volume serial number is A0A6-FD66
+C:.
+|   OrganizeProjectFolder.do
+|   tree
+|   tree.txt
+|   
++---DataAnalysis
++---DataManage
++---DataOutput
+|   +---Figures
+|   +---Mappings
+|   \---Tables
++---DataSources
++---DataUsing
+\---Report
