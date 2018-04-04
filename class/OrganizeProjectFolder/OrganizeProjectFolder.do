@@ -62,4 +62,5 @@ dir
 *let us go back within the main project folder
 pwd //ops I forgot where I was :)
 cd ..
-!tree> tree.txt /a /f // Copy?
+!tree> tree.txt /a /f 
+*列出目录结构并写入文档中
