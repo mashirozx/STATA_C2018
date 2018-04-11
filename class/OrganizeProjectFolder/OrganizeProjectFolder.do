@@ -45,7 +45,7 @@ cd DataOutput
 dir //check
 
 shell rmdir "Tabls" /s //the system might ask you if you want to delete the folder: say "Yes"
-* 结尾带有s时会有删除确认选项
+* cmd指令：结尾+ /s 是删除目录 ~ = rm -rf
 dir //check now
 
 *now let us just create Tabls and rename Tables

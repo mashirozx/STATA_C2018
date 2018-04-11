@@ -11,7 +11,7 @@ browse //look at the data in memory
 *let us talk a bit first the colos that you see (black, blue, and red)
 
 
-local mylocal "trunk weight length turn displacement" //assign variables to the "mylocal" placeholder.
+local mylocal "trunk weight length turn displacement" //assign variables to the "mylocal" placeholder（占位符）.
 												//mylocal is a local macro
 												//note: Stata reads "rhsvar" as a SINGLE string
 												//note: mylocal
@@ -63,6 +63,9 @@ local numbers 1
 local numbers `numbers' + 1  // 输出 string
 display "`numbers'" //DONT RUN the code! please stop and think what will be the result?
 
+*but you'll still get result 2 if run:
+di `numbers'
+
 ********************************************************************************
 **********************************************************Compound double quotes
 ********************************************************************************
@@ -82,6 +85,7 @@ local saying `"She said: "Quotes can be tricky""'
 	*(2) display "`saying'"
 	*(3) display `"`saying'"'
 
+*所以算是字符串拼接的展示？
 *a bit more challenging:
 local metasaying `"He said `"She said: "Quotes can be tricky""'"'
 local metasaying `"He said `saying'"'
@@ -93,6 +97,7 @@ display `"`metasaying'"'
 local vars make price mpg
 *or
 local vars "make price mpg"
+*完全相同？？啧啧
 
 *note
 display `vars' //shows you the vars values of the first observation
@@ -111,6 +116,7 @@ local vars make price //leave out mpg now, will vars_plus be updated automatical
 
 display "`vars_plus'" //the answer is ... "no" var_plus remains linked to the old vars local definition
 
+*Copy的时候管理两个变量~ Dynamic
 *is there a way out? yes ESCAPING with "\" the nested local
 *so that the local is not evaluated right away, but first reevaluated: example
 local vars "make price mpg"
@@ -120,6 +126,6 @@ local vars make price //drop mpg (these are left out)
 display "`vars_plus'"
 ********************************************************************************Extended macro functions
 local depvars "price weight length"
-local n_models : word count `depvars'
+local n_models : word count `depvars' //函数？
 display "`n_models'"
 ********************************************************************************
