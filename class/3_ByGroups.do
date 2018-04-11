@@ -36,6 +36,7 @@ summarize
 	*solve: there is a User Written (UW) command called "fsum": most of those for Stata 
 	*are usually stored in the SSC repository here: https://ideas.repec.org/s/boc/bocode.html
 	capture ssc install fsum //Quesiton: why do I use the "capture" command?
+	* 安装包
 	fsum //this command shows the whole name without abbreviation
 	*how to get help on how to use "fsum" (as any other stata command?)
 	help fsum
@@ -50,7 +51,7 @@ codebook, compact //another command i like a lot!!!
 *Oh no ... wait! First of all do you remember the key variable of the "auto.dta" dataset?
 *QUESTION: do you remember its synthax?
 	*(1) duplicates make
-	*(2) duplicates report make
+	*(2) duplicates report make  //* <- This, count 
 	*(3) report duplicates make
 	*(4) duplicate report make
 	
@@ -59,7 +60,7 @@ codebook, compact //another command i like a lot!!!
 *OK now let us do this with the by or "by" construct
 by foreign: sum //you see only sum typed? (==summarize)
 by foreign: describe //heck! well i learned something new ... some commands do not support bygrouping
-by foreign: codebook, compact //heck! well i learned something new ... some commands do not support bygrouping
+by foreign: codebook, compact // **heck! well i learned something new ... some commands do not support bygrouping
 by foreign: tabulate price mpg if mpg <= 20 //please note the if qualifiers: it poses conditions on the range of mpg
 by foreign: tabstat price mpg if mpg <= 20 //why dont you digit "help tabstat" to learn more about this command?
 
@@ -67,10 +68,11 @@ by foreign: tabstat price mpg if mpg <= 20 //why dont you digit "help tabstat" t
 ********************************************************************************SORTING
 ********************************************************************************
 *In several cases, and before bygrouping, it makes sense to sort on the variables of interest
-sort mpg //let us see what happens
-sort rep78 //let us note that for Stata missing values "." are comparable to VERY LAAAARGE NUMBERS!
-sort make //what happens when I sort on the base of a string variable?
-sort foreign //numbers appear in "black"; string variables in "red"; when you sort "blue" variables ... what does it happen?
+sort mpg //let us see what happens //观察值顺序变了，排序？
+sort rep78 //let us note that for Stata missing values "." are comparable to VERY LAAAARGE NUMBERS! 缺失值将被视为很大的数
+sort make //what happens when I sort on the base of a string variable?  按字母排序
+sort foreign //numbers appear in "black"; string variables in "red"; when you sort "blue" variables ... what does it happen? 
+**黑红蓝？？？？？？？？？？
 
 *TIP: sometimes data are already sorted ok ... but ALWAYS sort the data to be 100% sure
 *QUESTION: what if you want to sort by foreign and WITHIN foreign by mpg?
@@ -81,7 +83,7 @@ sort foreign //numbers appear in "black"; string variables in "red"; when you so
 	*(3) sort foreign mpg
 	*(4) sort mpg foreign
 *there is also a way to make the variables of interes appear first in the list
-order foreign mpg
+order foreign mpg //按照优先级排序
 
 *so you should really type teo commands ...
 sort foreign
@@ -90,10 +92,12 @@ by foreign: sum
 *... not really, because this is done MANY times in data exploration, Stata
 *allows writing ti in comapct form:
 
+*** by 和排序一起使用
 bysort foreign: sum //also "bys foreign: sum" is possible, this is also my favourite ... yeah I know who cares?
 ********************************************************************************SORTING AND GROUPING ACCORDING TO MULTIPLE VARIABLES
 ********************************************************************************Sorting when using longitudinal data
-*LONGITUDINAL data are data for which each observation is observed at differnt points in time
+*LONGITUDINAL（ 经度的； 纵向的； 纵的； 纵观的 ） data are data for which each observation is observed at differnt points in time
+*此类数据需要通过分组显示
 *These are also called "PANEL" data
 *Example
 * id	Age		HeightCm
@@ -121,6 +125,7 @@ sum
 sort countrycode year  //browse
 sort year countrycode //browse
 *bys应该是一个类似apply的操作
+*bys = bysort
 bys countrycode: sum GdpPerCapita
 bys year: sum LifeExpectBirth
 
@@ -132,26 +137,29 @@ bys year: sum LifeExpectBirth
 clear
 sysuse auto
 
+*保存
+*Ctrl+D 无法使用。。
 preserve //I am preserving the dataset because what I am going to do DESTROYS the previous dataset
 
 	*let us day I want to know how many subgroups of data I have by combining Foreign and rep78 variables?
 	*one way would be using the "contract" command and listing the resutl or browsing the dataset created
-	contract foreign rep78
+	contract foreign rep78 //建立频率和百分比数据集 =>  _freq 
 	list //... and let us understand what we have done
 	
 restore //go back to the original dataset
 
 *Question: think abut the two commands
 *"sort foreign rep78" and "sort rep78 foreign"
-	*(1) they will produce the same groups T/F
-	*(2) they will make observations and groups appear in the same order T/F
-	*(3) they will make variables to appear in the same order T/F
+	*(1) they will produce the same groups T/F *T
+	*(2) they will make observations and groups appear in the same order T/F *F
+	*(3) they will make variables to appear in the same order T/F *F
 ********************************************************************************
 ********************************************************************************BUILT IN _n _N
 ********************************************************************************
 /*we want to group observations in group because
 we want to operate in these groups independently for some reason*/
 
+*_n和_N 应该是某种全局变量
 *_n indicates the observation number in the dataset as it is currently ordered
 *_N indicates the Total number of observations in the Dataset
 *however we can combine _n and _N operators to use these methods of counting WITHIN specific groups
@@ -161,17 +169,20 @@ generate Nid = _N
 
 order nid Nid //... and browse to understand what we have done
 *so you see that Nid does NOT depend on the ordering but nid does
+*Nid不依赖于排序，但nid依赖于排序
 
-/*PUNCHLINE>>>Under  by varlist: + _n/_N combination, the _n and _N operators, function
+/*PUNCHLINE（变形）>>>Under  by varlist: + _n/_N combination, the _n and _N operators, function
 WITHIN each group of observations as defined by the varlist and not the entire dataset*/
 
 *for example we want now to know how many groups are generated by combining 
 *foreign and rep78 and how many observations within each group
 
-bys foreign rep78: gen nid_bygroup = _n
-bys foreign rep78: gen Nid_bygroup = _N
-order nid_bygroup Nid_bygroup
-sort Nid_bygroup nid_bygroup //We seem to have accomplished the task, but the group identifiers 
+bys foreign rep78: gen nid_bygroup = _n  //组中位序
+bys foreign rep78: gen Nid_bygroup = _N  //组中次序总是（组内次序最高位）
+order nid_bygroup Nid_bygroup //组内排序
+sort Nid_bygroup nid_bygroup//组间排序 
+							//此法不推荐
+							//We seem to have accomplished the task, but the group identifiers 
 							//look quite Ugly because the progression skips some integers in that it depends on the 
 							//number of observations within the group
 							//this will generate MISTAKES if the total number of observations in two or more groups
@@ -184,12 +195,18 @@ drop Nid_bygroup nid_bygroup //let us get rid of the wrong group identifier
 
 sort foreign rep78
 egen GroupId1 = group(foreign rep78)
+*按照foreign不同把rep78拆开分组、编号标记
 
 sort rep78 foreign
 egen GroupId2 = group(foreign rep78)
 
 sort rep78 foreign
 egen GroupId3 = group(rep78 foreign)
+
+sort foreign rep78
+egen GroupId4 = group(rep78 foreign) //实验。。
+*所以总体说来和sort无关？
+drop GroupId4
 
 order GroupId* foreign rep78 //... and browse to understand what we ahve done
 
@@ -204,29 +221,44 @@ order GroupId* foreign rep78 //... and browse
 *it seems that the option missin (all options in Stata go after the main command and a comma ","
 *DOES the trick! :)))))))))))))0
 ********************************************************************************
-*now I want within-group variables recording: (1) the Total observations in the groups and (2) the within group ordering of observations
-*and (3) that follows the foreign, rep78 sorting order and (4) that includes groups generated by missing values
+*now I want within-group variables recording: 
+*(1) the Total observations in the groups and 
+*(2) the within group ordering of observations and 
+*(3) that follows the foreign, rep78 sorting order and 
+*(4) that includes groups generated by missing values
 
-*(1) bys GroupId1: gen Nid_GroupId1 = _N
-* 	 bys GroupId1: gen nid_GroupId1 = _n
+*(1) 
+bys GroupId1: gen Nid_GroupId1 = _N
+* 	 
+bys GroupId1: gen nid_GroupId1 = _n
 *	
-*(2) bys GroupId4: gen Nid_GroupId4 = _N
-* 	 bys GroupId4: gen nid_GroupId4 = _n
+*(2) 
+bys GroupId4: gen Nid_GroupId4 = _N
+* 	 
+bys GroupId4: gen nid_GroupId4 = _n
 *
-*(3) sort foreign rep78
-*	 egen GroupId5 = group(foreign rep78), missing
-*	 bys GroupId5: gen Nid_GroupId5 = _N
-*	 bys GroupId5: gen nid_GroupId5 = _n
+*(3) 
+sort foreign rep78
+*	 
+egen GroupId5 = group(foreign rep78), missing
+*	 
+bys GroupId5: gen Nid_GroupId5 = _N
+*	 
+bys GroupId5: gen nid_GroupId5 = _n
 *
-*(4) egen GroupId6 = group(foreign rep78), missing
-*	 bys GroupId6: gen Nid_GroupId6 = _N
-*	 bys GroupId6: gen nid_GroupId6 = _n
+*(4) 
+egen GroupId6 = group(foreign rep78), missing
+*	 
+bys GroupId6: gen Nid_GroupId6 = _N
+*	 
+bys GroupId6: gen nid_GroupId6 = _n
 
 order GroupId* foreign rep78 //let us check
-assert GroupId5 == GroupId6 //Assert：比较两组间是否有区别
-assert GroupId4 == GroupId5
-assert GroupId4 == GroupId6
-assert GroupId1 == GroupId5
+//Assert：比较两组间是否有区别
+assert GroupId5 == GroupId6 //无差别，说明 sort 不必要？
+assert GroupId4 == GroupId5 //有差别，因为 missing
+assert GroupId4 == GroupId6 //有，同上
+assert GroupId1 == GroupId5 //有
 ********************************************************************************
 ********************************************************************************Distinguishing between first and last obervations
 ********************************************************************************Within a group
@@ -240,7 +272,8 @@ assert GroupId1 == GroupId5
 *how would you do that?
 
 *Example #2: check if there are duplicates observations in the dataset
-bysort *: assert _N == 2 //by using the wildcard *
+bysort *: assert _N == 1 //by using the wildcard *
+bysort *: gen franxx = _N //都是1.。
 *or
 duplicates report *
 
